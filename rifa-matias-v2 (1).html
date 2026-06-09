@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rifa Solidaria – Matías Muñoz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rojo:#C0392B; --rojo-d:#96281B; --crema:#FDF6EE;
+    --arena:#F0E4D4; --cafe:#7C4D2A; --oscuro:#2C1A0E;
+    --verde:#27AE60; --verde-d:#1e8449; --dorado:#D4A017;
+  }
+  body { font-family:'DM Sans',sans-serif; background:var(--crema); color:var(--oscuro); min-height:100vh; }
+
+  .hero { background:var(--rojo); color:#fff; text-align:center; padding:2.5rem 1.5rem 2rem; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(-45deg,transparent,transparent 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 19px); }
+  .hero-eyebrow { font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; opacity:.75; margin-bottom:.5rem; position:relative; }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.4rem); line-height:1.1; font-weight:900; position:relative; }
+  .hero h1 span { color:var(--dorado); }
+  .hero-sub { margin-top:.7rem; font-size:.95rem; opacity:.85; max-width:440px; margin-left:auto; margin-right:auto; line-height:1.5; position:relative; }
+  .hero-badge { display:inline-block; margin-top:1.2rem; background:var(--dorado); color:var(--oscuro); font-weight:700; font-size:1rem; padding:.45rem 1.3rem; border-radius:999px; position:relative; }
+
+  .tabs { display:flex; background:#fff; border-bottom:2px solid var(--arena); position:sticky; top:0; z-index:50; }
+  .tab { flex:1; padding:.85rem; text-align:center; font-weight:600; font-size:.9rem; cursor:pointer; color:#888; border-bottom:3px solid transparent; transition:all .15s; }
+  .tab.active { color:var(--rojo); border-bottom-color:var(--rojo); }
+
+  .view { display:none; } .view.active { display:block; }
+  .section { max-width:900px; margin:0 auto; padding:2rem 1.2rem; }
+  .section-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:1.2rem; color:var(--cafe); border-bottom:2px solid var(--arena); padding-bottom:.5rem; display:flex; align-items:center; justify-content:space-between; gap:.8rem; flex-wrap:wrap; }
+
+  .counter-bar { background:var(--cafe); color:#fff; text-align:center; padding:.85rem 1rem; font-size:.9rem; }
+  .counter-bar strong { font-size:1.05rem; color:var(--dorado); }
+
+  /* Loading */
+  .loading { text-align:center; padding:3rem; color:#aaa; font-size:.9rem; }
+  .spinner { display:inline-block; width:28px; height:28px; border:3px solid var(--arena); border-top-color:var(--rojo); border-radius:50%; animation:spin .7s linear infinite; margin-bottom:.8rem; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .rifas-nav { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
+  .rifa-tab { padding:.45rem 1rem; border-radius:999px; border:2px solid var(--arena); background:#fff; font-weight:600; font-size:.85rem; cursor:pointer; transition:all .15s; }
+  .rifa-tab.active { background:var(--rojo); border-color:var(--rojo); color:#fff; }
+  .rifa-tab:hover:not(.active) { border-color:var(--rojo); color:var(--rojo); }
+  .btn-add-rifa { padding:.45rem 1rem; border-radius:999px; border:2px dashed var(--cafe); background:transparent; font-weight:600; font-size:.85rem; cursor:pointer; color:var(--cafe); transition:all .15s; }
+  .btn-add-rifa:hover { background:var(--cafe); color:#fff; }
+
+  .ticket-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:.6rem; max-width:400px; margin:0 auto 1.5rem; }
+  .ticket { aspect-ratio:1; border-radius:10px; border:2px solid var(--arena); background:#fff; font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:var(--oscuro); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:all .15s; user-select:none; }
+  .ticket:hover:not(.sold):not(.reserved):not(.disabled) { border-color:var(--rojo); background:#fff5f5; transform:scale(1.04); }
+  .ticket.sold { background:var(--rojo); border-color:var(--rojo-d); color:#fff; cursor:default; }
+  .ticket.reserved { background:var(--dorado); border-color:#b8860b; color:var(--oscuro); cursor:default; }
+  .ticket.disabled { opacity:.4; cursor:default; }
+  .ticket .t-num { line-height:1; }
+  .ticket .t-name { font-family:'DM Sans',sans-serif; font-size:.46rem; font-weight:600; opacity:.9; text-align:center; padding:0 3px; line-height:1.2; margin-top:2px; }
+
+  .legend { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.5rem; }
+  .legend-item { display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:#666; }
+  .legend-dot { width:12px; height:12px; border-radius:3px; }
+
+  .prizes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.75rem; }
+  .prize-card { background:#fff; border:1.5px solid var(--arena); border-radius:10px; padding:.8rem .95rem; display:flex; align-items:flex-start; gap:.65rem; }
+  .prize-num { background:var(--rojo); color:#fff; font-weight:700; font-size:.75rem; min-width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .prize-name { font-size:.85rem; line-height:1.35; font-weight:500; }
+
+  .login-card { max-width:340px; margin:4rem auto; background:#fff; border-radius:16px; padding:2rem; border:2px solid var(--arena); text-align:center; }
+  .login-card h2 { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.4rem; }
+  .login-card p { font-size:.85rem; color:#666; margin-bottom:1.5rem; }
+  .lock-icon { font-size:2.5rem; margin-bottom:.8rem; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.8rem; margin-bottom:1.8rem; }
+  .stat-card { background:#fff; border:1.5px solid var(--arena); border-radius:12px; padding:1rem 1.1rem; }
+  .stat-label { font-size:.72rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.3rem; }
+  .stat-val { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; }
+  .stat-val.verde { color:var(--verde-d); } .stat-val.rojo { color:var(--rojo); } .stat-val.dorado { color:var(--cafe); }
+
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; padding:1rem; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--crema); border-radius:16px; padding:1.8rem; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+  .modal h2 { font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:.25rem; }
+  .modal .modal-sub { font-size:.85rem; color:#666; margin-bottom:1.2rem; }
+  .field { margin-bottom:.9rem; }
+  .field label { display:block; font-size:.78rem; font-weight:600; color:#555; margin-bottom:.3rem; text-transform:uppercase; letter-spacing:.05em; }
+  .field input, .field select { width:100%; border:1.5px solid var(--arena); border-radius:8px; padding:.65rem .85rem; font-family:'DM Sans',sans-serif; font-size:.9rem; outline:none; background:#fff; color:var(--oscuro); }
+  .field input:focus, .field select:focus { border-color:var(--rojo); }
+  .modal-btns { display:flex; gap:.6rem; margin-top:1.2rem; }
+  .btn { flex:1; padding:.7rem; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:opacity .15s; }
+  .btn:hover:not(:disabled) { opacity:.85; }
+  .btn:disabled { opacity:.5; cursor:default; }
+  .btn-confirm { background:var(--rojo); color:#fff; }
+  .btn-cancel  { background:var(--arena); color:var(--oscuro); }
+  .btn-verde   { background:var(--verde); color:#fff; }
+
+  .filter-row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+  .filter-row select, .filter-row input { border:1.5px solid var(--arena); border-radius:8px; padding:.45rem .75rem; font-family:'DM Sans',sans-serif; font-size:.85rem; outline:none; background:#fff; }
+  .table-wrap { overflow-x:auto; border-radius:12px; border:1.5px solid var(--arena); }
+  table { width:100%; border-collapse:collapse; background:#fff; font-size:.85rem; }
+  thead { background:var(--cafe); color:#fff; }
+  th { padding:.7rem 1rem; text-align:left; font-weight:600; white-space:nowrap; }
+  td { padding:.65rem 1rem; border-bottom:1px solid var(--arena); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fdf3ec; }
+  .badge { display:inline-block; padding:.2rem .6rem; border-radius:999px; font-size:.75rem; font-weight:600; }
+  .badge-pagado { background:#d4edda; color:#155724; }
+  .badge-reservado { background:#fff3cd; color:#856404; }
+  .correlativo { font-family:monospace; font-weight:700; color:var(--cafe); }
+  .btn-sm { padding:.3rem .7rem; border:none; border-radius:6px; font-size:.78rem; font-weight:600; cursor:pointer; }
+  .btn-pagar { background:var(--verde); color:#fff; }
+  .btn-borrar { background:#e74c3c; color:#fff; margin-left:.3rem; }
+  .btn-export { display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem; background:var(--cafe); color:#fff; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:600; cursor:pointer; }
+  .empty-state { text-align:center; padding:3rem; color:#aaa; font-size:.9rem; }
+
+  .toast { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(80px); color:#fff; padding:.65rem 1.3rem; border-radius:999px; font-weight:600; font-size:.88rem; transition:transform .3s; z-index:300; white-space:nowrap; pointer-events:none; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  footer { text-align:center; padding:1.5rem 1rem; font-size:.78rem; color:#aaa; border-top:1px solid var(--arena); }
+
+  @media(max-width:500px) {
+    .ticket-grid { max-width:300px; gap:.45rem; }
+    .ticket { font-size:1.1rem; }
+    th, td { padding:.5rem .6rem; font-size:.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <p class="hero-eyebrow">Rifa Solidaria · 2025</p>
+  <h1>Por <span>Matías</span><br>Muñoz</h1>
+  <p class="hero-sub">Todos los fondos van directo a cubrir sus gastos médicos. ¡Gracias por tu apoyo!</p>
+  <span class="hero-badge">$5.000 por número</span>
+</section>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('publica')">🎟️ Números</div>
+  <div class="tab" onclick="switchTab('premios')">🎁 Premios</div>
+  <div class="tab" onclick="switchTab('admin')">🔒 Admin</div>
+</div>
+
+<!-- PÚBLICA -->
+<div class="view active" id="view-publica">
+  <div class="counter-bar">
+    Pagados: <strong id="soldCount">—</strong> &nbsp;·&nbsp;
+    Reservados: <strong id="reservedCount">—</strong> &nbsp;·&nbsp;
+    Recaudado: <strong id="totalAmount">—</strong>
+  </div>
+  <div class="section">
+    <div class="rifas-nav" id="publicRifasNav"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fff;border:2px solid #F0E4D4"></div>Disponible</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dorado)"></div>Reservado</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--rojo)"></div>Pagado</div>
+    </div>
+    <div id="publicLoading" class="loading"><div class="spinner"></div><br>Cargando...</div>
+    <div class="ticket-grid" id="publicTickets" style="display:none"></div>
+    <p style="text-align:center;font-size:.82rem;color:#aaa;margin-top:1rem;">Para comprar un número, contacta al organizador.</p>
+  </div>
+</div>
+
+<!-- PREMIOS -->
+<div class="view" id="view-premios">
+  <div class="section">
+    <h2 class="section-title">🎁 Lista de premios</h2>
+    <div class="prizes-grid" id="prizesGrid"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="view" id="view-admin">
+  <div id="adminLogin" class="section">
+    <div class="login-card">
+      <div class="lock-icon">🔐</div>
+      <h2>Acceso Admin</h2>
+      <p>Solo para organizadores de la rifa</p>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="passInput" placeholder="Ingresa la contraseña"/>
+      </div>
+      <button class="btn btn-confirm" style="width:100%;margin-top:.5rem" onclick="tryLogin()">Entrar</button>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display:none">
+    <div class="section">
+      <div class="stats-grid" id="statsGrid"><div class="loading"><div class="spinner"></div></div></div>
+      <div class="section-title">
+        Gestión de rifas
+        <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+      </div>
+      <div class="rifas-nav" id="adminRifasNav"></div>
+      <div style="text-align:center">
+        <div id="adminLoading2" class="loading" style="display:none"><div class="spinner"></div></div>
+        <div class="ticket-grid" id="adminTickets"></div>
+      </div>
+      <div class="section-title" style="margin-top:1.5rem">
+        Registro correlativo
+        <div class="filter-row">
+          <select id="filterRifa" onchange="renderTable()"><option value="">Todas las rifas</option></select>
+          <select id="filterStatus" onchange="renderTable()">
+            <option value="">Todos</option>
+            <option value="pagado">Pagado</option>
+            <option value="reservado">Reservado</option>
+          </select>
+          <input type="text" id="filterSearch" placeholder="Buscar nombre…" oninput="renderTable()" style="max-width:150px"/>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Correlativo</th><th>Rifa</th><th>N°</th><th>Comprador</th><th>Teléfono</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+          <tbody id="trackingBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VENTA -->
+<div class="modal-overlay" id="modalVenta">
+  <div class="modal">
+    <h2>Registrar venta</h2>
+    <p class="modal-sub">Rifa <span id="mv-rifa"></span> · Número <span id="mv-num"></span></p>
+    <div class="field"><label>Nombre del comprador</label><input type="text" id="mv-nombre" placeholder="Nombre completo" maxlength="40"/></div>
+    <div class="field"><label>Teléfono / contacto</label><input type="text" id="mv-tel" placeholder="+56 9 XXXX XXXX" maxlength="20"/></div>
+    <div class="field"><label>Estado</label>
+      <select id="mv-estado">
+        <option value="reservado">Reservado — pendiente pago</option>
+        <option value="pagado">Pagado ✓</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-cancel" onclick="closeModal('modalVenta')">Cancelar</button>
+      <button class="btn btn-confirm" id="btnConfirmVenta" onclick="confirmVenta()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA RIFA -->
+<div class="modal-overlay" id="modalNuevaRifa">
+  <div class="modal">
+    <h2>Nueva rifa</h2>
+    <p class="modal-sub">Se creará con 10 números disponibles</p>
+    <div class="field"><label>Nombre / etiqueta (opcional)</label><input type="text" id="nr-nombre" placeholder="ej: Rifa diciembre, Tanda 2…" maxlength="30"/></div>
+    <div class="modal-btns">
+      <button class="btn btn-cancel" onclick="closeModal('modalNuevaRifa')">Cancelar</button>
+      <button class="btn btn-verde" id="btnNuevaRifa" onclick="confirmarNuevaRifa()">Crear rifa</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Rifa solidaria a beneficio de Matías Muñoz · $5.000 por número</footer>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — PEGA AQUÍ TU URL DE APPS SCRIPT
+// ══════════════════════════════════════════════
+const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbyf1q58zW00TRUhIyqDG0c803_6CRyc7Qs54w6Npf7iA2o-Yea91DRPMMA6TMw38kYwbg/exec';
+const ADMIN_PASS  = 'matias2025'; // puedes cambiarla
+
+// ══ ESTADO LOCAL (caché) ══
+let db = { rifas: [], ventas: [], correlativoSig: 1 };
+let currentRifaPublic = null;
+let currentRifaAdmin  = null;
+let pendingTicket     = null;
+let adminLoggedIn     = false;
+
+const PRIZES = [
+  "2 bidones + dispensador","Consejería ginecológica/anticonceptiva",
+  "Pack 5 sobres mundial (2)","Consulta nutricional","Polera mujer",
+  "Polera hombre","Brunch para 2 — Sofá Café","2 poleras Murph",
+  "Mes Katsu","Frazada 2 plazas","Juego de toallas","Manta sherpa",
+  "Barra 20 kg","Balón 9 kg","Par mancuernas 15 lbs",
+  "Plan semestral 12 clases","Plan trimestral 16 clases","Plan mensual full",
+  "Mini waffle","Cinturón levantamiento talla M","Kit muñequeras + calleras",
+  "Día de peluquería","Gift card ropa niño","Gift card tienda de joyas"
+];
+
+// ══ API ══
+async function apiGet(params) {
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
+  const r   = await fetch(url);
+  return r.json();
+}
+async function apiPost(body) {
+  const r = await fetch(SCRIPT_URL, {
+    method:'POST', body: JSON.stringify(body),
+    headers:{'Content-Type':'application/json'}
+  });
+  return r.json();
+}
+
+// ══ INIT ══
+async function loadData() {
+  try {
+    const data = await apiGet({ action: 'getData' });
+    db.rifas          = data.rifas          || [];
+    db.ventas         = data.ventas         || [];
+    db.correlativoSig = data.correlativoSig || 1;
+    if (!db.rifas.length) db.rifas = [{ id:1, label:'Rifa 1' }];
+    currentRifaPublic = db.rifas[0].id;
+    currentRifaAdmin  = db.rifas[0].id;
+  } catch(e) {
+    // Sin conexión al script, modo demo
+    db.rifas = [{ id:1, label:'Rifa 1' }];
+    db.ventas = [];
+    currentRifaPublic = 1; currentRifaAdmin = 1;
+    showToast('⚠️ Configura la URL del script para guardar datos', '#e67e22');
+  }
+}
+
+// ══ TABS ══
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['publica','premios','admin'][i]===tab));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  if (tab==='publica') renderPublic();
+  if (tab==='admin' && adminLoggedIn) renderAdmin();
+}
+
+// ══ PREMIOS ══
+(function(){
+  const g = document.getElementById('prizesGrid');
+  PRIZES.forEach((p,i) => {
+    g.innerHTML += `<div class="prize-card"><span class="prize-num">${i+1}</span><span class="prize-name">${p}</span></div>`;
+  });
+})();
+
+// ══ PUBLIC ══
+function renderPublic() {
+  const nav = document.getElementById('publicRifasNav');
+  nav.innerHTML = '';
+  db.rifas.forEach(r => {
+    const b = document.createElement('button');
+    b.className = 'rifa-tab'+(r.id==currentRifaPublic?' active':'');
+    b.textContent = r.label;
+    b.onclick = () => { currentRifaPublic=r.id; renderPublic(); };
+    nav.appendChild(b);
+  });
+
+  const grid = document.getElementById('publicTickets');
+  const load = document.getElementById('publicLoading');
+  load.style.display='none'; grid.style.display='grid';
+  grid.innerHTML='';
+  for (let n=1;n<=10;n++) {
+    const v   = getVenta(currentRifaPublic,n);
+    const cls = v ? (v.estado==='pagado'?'sold':'reserved') : '';
+    const lbl = v ? `<span class="t-name">${v.nombre.split(' ')[0]}</span>` : '';
+    grid.innerHTML += `<div class="ticket ${cls}"><span class="t-num">${n}</span>${lbl}</div>`;
+  }
+
+  const pagados    = db.ventas.filter(v=>v.estado==='pagado').length;
+  const reservados = db.ventas.filter(v=>v.estado==='reservado').length;
+  document.getElementById('soldCount').textContent    = pagados;
+  document.getElementById('reservedCount').textContent= reservados;
+  document.getElementById('totalAmount').textContent  = '$'+(pagados*5000).toLocaleString('es-CL');
+}
+
+// ══ LOGIN ══
+function tryLogin() {
+  if (document.getElementById('passInput').value===ADMIN_PASS) {
+    adminLoggedIn=true;
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    renderAdmin();
+  } else {
+    showToast('Contraseña incorrecta ❌','#e74c3c');
+    document.getElementById('passInput').value='';
+  }
+}
+document.getElementById('passInput').addEventListener('keydown',e=>{ if(e.key==='Enter') tryLogin(); });
+
+// ══ ADMIN ══
+function renderAdmin() {
+  renderStats(); renderAdminNav(); renderAdminTickets(); renderTable(); renderFilterRifa();
+}
+
+function renderStats() {
+  const pagados    = db.ventas.filter(v=>v.estado==='pagado').length;
+  const reservados = db.ventas.filter(v=>v.estado==='reservado').length;
+  const total      = db.rifas.length*10;
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Rifas</div><div class="stat-val dorado">${db.rifas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Pagados</div><div class="stat-val verde">${pagados}</div></div>
+    <div class="stat-card"><div class="stat-label">Reservados</div><div class="stat-val" style="color:var(--dorado)">${reservados}</div></div>
+    <div class="stat-card"><div class="stat-label">Disponibles</div><div class="stat-val">${total-pagados-reservados}</div></div>
+    <div class="stat-card"><div class="stat-label">Recaudado</div><div class="stat-val verde">$${(pagados*5000).toLocaleString('es-CL')}</div></div>
+    <div class="stat-card"><div class="stat-label">Por cobrar</div><div class="stat-val rojo">$${(reservados*5000).toLocaleString('es-CL')}</div></div>`;
+}
+
+function renderAdminNav() {
+  const nav = document.getElementById('adminRifasNav');
+  nav.innerHTML='';
+  db.rifas.forEach(r=>{
+    const b=document.createElement('button');
+    b.className='rifa-tab'+(r.id==currentRifaAdmin?' active':'');
+    b.textContent=r.label;
+    b.onclick=()=>{ currentRifaAdmin=r.id; renderAdmin(); };
+    nav.appendChild(b);
+  });
+  const add=document.createElement('button');
+  add.className='btn-add-rifa'; add.textContent='+ Nueva rifa';
+  add.onclick=()=>{ document.getElementById('nr-nombre').value=''; openModal('modalNuevaRifa'); };
+  nav.appendChild(add);
+}
+
+function renderAdminTickets() {
+  const grid=document.getElementById('adminTickets');
+  grid.innerHTML='';
+  for(let n=1;n<=10;n++){
+    const v=getVenta(currentRifaAdmin,n);
+    const cls=v?(v.estado==='pagado'?'sold':'reserved'):'';
+    const lbl=v?`<span class="t-name">${v.nombre.split(' ')[0]}</span>`:'';
+    const t=document.createElement('div');
+    t.className=`ticket ${cls}`;
+    t.innerHTML=`<span class="t-num">${n}</span>${lbl}`;
+    if(!v) t.onclick=()=>openVentaModal(currentRifaAdmin,n);
+    grid.appendChild(t);
+  }
+}
+
+function renderTable() {
+  const fR=document.getElementById('filterRifa').value;
+  const fS=document.getElementById('filterStatus').value;
+  const fQ=document.getElementById('filterSearch').value.toLowerCase();
+  let rows=[...db.ventas].sort((a,b)=>Number(a.correlativo)-Number(b.correlativo));
+  if(fR) rows=rows.filter(v=>v.rifaId==fR);
+  if(fS) rows=rows.filter(v=>v.estado===fS);
+  if(fQ) rows=rows.filter(v=>v.nombre.toLowerCase().includes(fQ)||(v.telefono||'').includes(fQ));
+
+  const body=document.getElementById('trackingBody');
+  if(!rows.length){ body.innerHTML='<tr><td colspan="8" class="empty-state">Sin registros aún</td></tr>'; return; }
+  body.innerHTML=rows.map(v=>{
+    const corr=`RIF-${String(v.correlativo).padStart(3,'0')}`;
+    const badge=v.estado==='pagado'
+      ?'<span class="badge badge-pagado">✓ Pagado</span>'
+      :'<span class="badge badge-reservado">⏳ Reservado</span>';
+    const btnP=v.estado!=='pagado'
+      ?`<button class="btn-sm btn-pagar" onclick="marcarPagado(${v.correlativo})">Pago recibido</button>`:'';
+    return `<tr>
+      <td><span class="correlativo">${corr}</span></td>
+      <td>${v.rifaLabel||'—'}</td>
+      <td><strong>${v.numero}</strong></td>
+      <td>${v.nombre}</td>
+      <td>${v.telefono||'—'}</td>
+      <td>${badge}</td>
+      <td>${v.fecha}</td>
+      <td>${btnP}<button class="btn-sm btn-borrar" onclick="borrarVenta(${v.correlativo})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFilterRifa() {
+  const sel=document.getElementById('filterRifa'); const cur=sel.value;
+  sel.innerHTML='<option value="">Todas las rifas</option>';
+  db.rifas.forEach(r=>{ sel.innerHTML+=`<option value="${r.id}">${r.label}</option>`; });
+  sel.value=cur;
+}
+
+// ══ ACCIONES ══
+function getVenta(rifaId,numero) {
+  return db.ventas.find(v=>v.rifaId==rifaId&&Number(v.numero)===numero)||null;
+}
+
+function openVentaModal(rifaId,numero) {
+  pendingTicket={rifaId,numero};
+  const rifa=db.rifas.find(r=>r.id==rifaId);
+  document.getElementById('mv-rifa').textContent=rifa.label;
+  document.getElementById('mv-num').textContent='#'+numero;
+  document.getElementById('mv-nombre').value='';
+  document.getElementById('mv-tel').value='';
+  document.getElementById('mv-estado').value='reservado';
+  openModal('modalVenta');
+  setTimeout(()=>document.getElementById('mv-nombre').focus(),100);
+}
+
+async function confirmVenta() {
+  const nombre=document.getElementById('mv-nombre').value.trim();
+  if(!nombre){ document.getElementById('mv-nombre').focus(); showToast('Ingresa el nombre ⚠️','#e67e22'); return; }
+  const tel   =document.getElementById('mv-tel').value.trim();
+  const estado=document.getElementById('mv-estado').value;
+  const fecha =new Date().toLocaleDateString('es-CL');
+  const btn   =document.getElementById('btnConfirmVenta');
+  btn.disabled=true; btn.textContent='Guardando…';
+
+  try {
+    const res=await apiPost({ action:'addVenta', rifaId:pendingTicket.rifaId,
+      numero:pendingTicket.numero, nombre, telefono:tel, estado, fecha });
+    const newCorr=res.correlativo||db.correlativoSig++;
+    const rifa=db.rifas.find(r=>r.id==pendingTicket.rifaId);
+    db.ventas.push({ correlativo:newCorr, rifaId:pendingTicket.rifaId,
+      rifaLabel:rifa?.label, numero:pendingTicket.numero,
+      nombre, telefono:tel, estado, fecha });
+    closeModal('modalVenta');
+    renderAdmin(); renderPublic();
+    showToast(`RIF-${String(newCorr).padStart(3,'0')} — ${nombre} guardado 🎉`);
+  } catch(e) {
+    showToast('Error al guardar. Verifica la URL del script.','#e74c3c');
+  }
+  btn.disabled=false; btn.textContent='Guardar';
+}
+
+async function marcarPagado(correlativo) {
+  const v=db.ventas.find(v=>Number(v.correlativo)===Number(correlativo));
+  if(!v) return;
+  try {
+    await apiPost({ action:'updateEstado', correlativo, estado:'pagado' });
+    v.estado='pagado'; renderAdmin(); renderPublic();
+    showToast('Marcado como pagado ✓');
+  } catch(e) { showToast('Error al actualizar','#e74c3c'); }
+}
+
+async function borrarVenta(correlativo) {
+  if(!confirm('¿Eliminar este registro?')) return;
+  try {
+    await apiPost({ action:'deleteVenta', correlativo });
+    db.ventas=db.ventas.filter(v=>Number(v.correlativo)!==Number(correlativo));
+    renderAdmin(); renderPublic();
+    showToast('Registro eliminado','#e74c3c');
+  } catch(e) { showToast('Error al eliminar','#e74c3c'); }
+}
+
+async function confirmarNuevaRifa() {
+  const raw=document.getElementById('nr-nombre').value.trim();
+  const btn=document.getElementById('btnNuevaRifa');
+  btn.disabled=true; btn.textContent='Creando…';
+  try {
+    const res=await apiPost({ action:'addRifa', label:raw||'' });
+    db.rifas.push({ id:res.id, label:res.label });
+    currentRifaAdmin=res.id;
+    closeModal('modalNuevaRifa');
+    renderAdmin(); renderPublic();
+    showToast(`${res.label} creada 🎟️`);
+  } catch(e) { showToast('Error al crear rifa','#e74c3c'); }
+  btn.disabled=false; btn.textContent='Crear rifa';
+}
+
+function exportCSV() {
+  const head=['Correlativo','Rifa','Número','Nombre','Teléfono','Estado','Fecha'];
+  const rows=db.ventas.sort((a,b)=>Number(a.correlativo)-Number(b.correlativo)).map(v=>
+    [`RIF-${String(v.correlativo).padStart(3,'0')}`,v.rifaLabel||'',v.numero,v.nombre,v.telefono||'',v.estado,v.fecha]);
+  const csv=[head,...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='rifa-matias.csv'; a.click();
+  showToast('CSV exportado ⬇');
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(o=>o.classList.remove('open'));
+  if(e.key==='Enter'&&document.getElementById('modalVenta').classList.contains('open')) confirmVenta();
+});
+
+function showToast(msg,bg='#27AE60') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=bg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// INIT
+loadData().then(()=>renderPublic());
+</script>
+</body>
+</html>
