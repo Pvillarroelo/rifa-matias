@@ -253,7 +253,7 @@
 // ══════════════════════════════════════════════
 //  CONFIG — PEGA AQUÍ TU URL DE APPS SCRIPT
 // ══════════════════════════════════════════════
-const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbyf1q58zW00TRUhIyqDG0c803_6CRyc7Qs54w6Npf7iA2o-Yea91DRPMMA6TMw38kYwbg/exec';
+const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbxVFIynzHhT75yrz8uaqfTFgFVTBp2xMoGISQlcNl3wCThFoYQnGrUPlMLsHDVUDLZz_A/exec';
 const ADMIN_PASS  = 'matias2025'; // puedes cambiarla
 
 // ══ ESTADO LOCAL (caché) ══
@@ -277,14 +277,13 @@ const PRIZES = [
 // ══ API ══
 async function apiGet(params) {
   const url = SCRIPT_URL + '?' + new URLSearchParams(params);
-  const r   = await fetch(url);
+  const r   = await fetch(url, { redirect: 'follow' });
   return r.json();
 }
 async function apiPost(body) {
-  const r = await fetch(SCRIPT_URL, {
-    method:'POST', body: JSON.stringify(body),
-    headers:{'Content-Type':'application/json'}
-  });
+  // Apps Script CORS fix: send POST data as GET parameter
+  const url = SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(body));
+  const r   = await fetch(url, { redirect: 'follow' });
   return r.json();
 }
 
