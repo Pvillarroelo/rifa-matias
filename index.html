@@ -22,6 +22,11 @@
   .hero-sub { margin-top:.7rem; font-size:.95rem; opacity:.85; max-width:440px; margin-left:auto; margin-right:auto; line-height:1.5; position:relative; }
   .hero-badge { display:inline-block; margin-top:1.2rem; background:var(--dorado); color:var(--oscuro); font-weight:700; font-size:1rem; padding:.45rem 1.3rem; border-radius:999px; position:relative; }
 
+  /* SORTEO BANNER */
+  .sorteo-banner { background:var(--oscuro); color:#fff; text-align:center; padding:.9rem 1rem; font-size:.88rem; line-height:1.6; }
+  .sorteo-banner strong { color:var(--dorado); }
+  .sorteo-banner a { color:var(--dorado); text-decoration:none; font-weight:700; }
+
   .tabs { display:flex; background:#fff; border-bottom:2px solid var(--arena); position:sticky; top:0; z-index:50; }
   .tab { flex:1; padding:.85rem; text-align:center; font-weight:600; font-size:.9rem; cursor:pointer; color:#888; border-bottom:3px solid transparent; transition:all .15s; }
   .tab.active { color:var(--rojo); border-bottom-color:var(--rojo); }
@@ -33,7 +38,6 @@
   .counter-bar { background:var(--cafe); color:#fff; text-align:center; padding:.85rem 1rem; font-size:.9rem; }
   .counter-bar strong { font-size:1.05rem; color:var(--dorado); }
 
-  /* Loading */
   .loading { text-align:center; padding:3rem; color:#aaa; font-size:.9rem; }
   .spinner { display:inline-block; width:28px; height:28px; border:3px solid var(--arena); border-top-color:var(--rojo); border-radius:50%; animation:spin .7s linear infinite; margin-bottom:.8rem; }
   @keyframes spin { to { transform:rotate(360deg); } }
@@ -50,7 +54,6 @@
   .ticket:hover:not(.sold):not(.reserved):not(.disabled) { border-color:var(--rojo); background:#fff5f5; transform:scale(1.04); }
   .ticket.sold { background:var(--rojo); border-color:var(--rojo-d); color:#fff; cursor:default; }
   .ticket.reserved { background:var(--dorado); border-color:#b8860b; color:var(--oscuro); cursor:default; }
-  .ticket.disabled { opacity:.4; cursor:default; }
   .ticket .t-num { line-height:1; }
   .ticket .t-name { font-family:'DM Sans',sans-serif; font-size:.46rem; font-weight:600; opacity:.9; text-align:center; padding:0 3px; line-height:1.2; margin-top:2px; }
 
@@ -58,11 +61,26 @@
   .legend-item { display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:#666; }
   .legend-dot { width:12px; height:12px; border-radius:3px; }
 
+  /* PAGO CARD */
+  .pago-card { background:#fff; border:2px solid var(--arena); border-radius:14px; padding:1.4rem 1.5rem; margin-bottom:1.5rem; max-width:420px; margin-left:auto; margin-right:auto; }
+  .pago-card h3 { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1rem; color:var(--cafe); }
+  .pago-row { display:flex; justify-content:space-between; align-items:center; padding:.5rem 0; border-bottom:1px solid var(--arena); font-size:.9rem; gap:1rem; }
+  .pago-row:last-of-type { border-bottom:none; }
+  .pago-label { color:#888; font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+  .pago-val { font-weight:600; color:var(--oscuro); text-align:right; }
+  .pago-nota { margin-top:1rem; font-size:.82rem; color:#888; line-height:1.5; text-align:center; }
+  .copy-btn { background:var(--arena); border:none; border-radius:6px; padding:.2rem .6rem; font-size:.75rem; font-weight:600; cursor:pointer; color:var(--cafe); margin-left:.5rem; }
+  .copy-btn:hover { background:var(--cafe); color:#fff; }
+
+  /* PREMIOS */
   .prizes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.75rem; }
   .prize-card { background:#fff; border:1.5px solid var(--arena); border-radius:10px; padding:.8rem .95rem; display:flex; align-items:flex-start; gap:.65rem; }
   .prize-num { background:var(--rojo); color:#fff; font-weight:700; font-size:.75rem; min-width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
-  .prize-name { font-size:.85rem; line-height:1.35; font-weight:500; }
+  .prize-info { flex:1; }
+  .prize-name { font-size:.85rem; line-height:1.35; font-weight:600; }
+  .prize-valor { font-size:.75rem; color:#999; margin-top:.15rem; }
 
+  /* ADMIN */
   .login-card { max-width:340px; margin:4rem auto; background:#fff; border-radius:16px; padding:2rem; border:2px solid var(--arena); text-align:center; }
   .login-card h2 { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.4rem; }
   .login-card p { font-size:.85rem; color:#666; margin-bottom:1.5rem; }
@@ -76,7 +94,7 @@
 
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; padding:1rem; }
   .modal-overlay.open { display:flex; }
-  .modal { background:var(--crema); border-radius:16px; padding:1.8rem; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+  .modal { background:var(--crema); border-radius:16px; padding:1.8rem; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,.25); max-height:90vh; overflow-y:auto; }
   .modal h2 { font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:.25rem; }
   .modal .modal-sub { font-size:.85rem; color:#666; margin-bottom:1.2rem; }
   .field { margin-bottom:.9rem; }
@@ -130,9 +148,15 @@
   <span class="hero-badge">$5.000 por número</span>
 </section>
 
+<div class="sorteo-banner">
+  📅 Sorteo: <strong>3 de julio 2026 · 20:00 hrs</strong> &nbsp;·&nbsp;
+  Transmisión en vivo: <a href="https://instagram.com/katsufitness.cl" target="_blank">@KatsuFitness.cl</a>
+</div>
+
 <div class="tabs">
   <div class="tab active" onclick="switchTab('publica')">🎟️ Números</div>
   <div class="tab" onclick="switchTab('premios')">🎁 Premios</div>
+  <div class="tab" onclick="switchTab('pago')">💳 Pagar</div>
   <div class="tab" onclick="switchTab('admin')">🔒 Admin</div>
 </div>
 
@@ -152,7 +176,7 @@
     </div>
     <div id="publicLoading" class="loading"><div class="spinner"></div><br>Cargando...</div>
     <div class="ticket-grid" id="publicTickets" style="display:none"></div>
-    <p style="text-align:center;font-size:.82rem;color:#aaa;margin-top:1rem;">Para comprar un número, contacta al organizador.</p>
+    <p style="text-align:center;font-size:.82rem;color:#aaa;margin-top:1rem;">¿Quieres un número? Ve a la pestaña 💳 Pagar para ver cómo.</p>
   </div>
 </div>
 
@@ -161,6 +185,53 @@
   <div class="section">
     <h2 class="section-title">🎁 Lista de premios</h2>
     <div class="prizes-grid" id="prizesGrid"></div>
+  </div>
+</div>
+
+<!-- PAGO -->
+<div class="view" id="view-pago">
+  <div class="section">
+    <h2 class="section-title">💳 ¿Cómo participar?</h2>
+
+    <div class="pago-card">
+      <h3>💸 Datos de transferencia</h3>
+      <div class="pago-row">
+        <span class="pago-label">Nombre</span>
+        <span class="pago-val">Matías Muñoz</span>
+      </div>
+      <div class="pago-row">
+        <span class="pago-label">RUT</span>
+        <span class="pago-val">17.029.923-K <button class="copy-btn" onclick="copiar('17029923K')">Copiar</button></span>
+      </div>
+      <div class="pago-row">
+        <span class="pago-label">Banco</span>
+        <span class="pago-val">Banco Estado</span>
+      </div>
+      <div class="pago-row">
+        <span class="pago-label">Tipo de cuenta</span>
+        <span class="pago-val">Cuenta RUT</span>
+      </div>
+      <div class="pago-row">
+        <span class="pago-label">N° de cuenta</span>
+        <span class="pago-val">17029923 <button class="copy-btn" onclick="copiar('17029923')">Copiar</button></span>
+      </div>
+      <div class="pago-row">
+        <span class="pago-label">Monto por número</span>
+        <span class="pago-val" style="color:var(--rojo);font-size:1.05rem">$5.000 CLP</span>
+      </div>
+      <p class="pago-nota">Una vez realizada la transferencia, envía el comprobante a la persona que te vendió el número para confirmar tu participación. 🧾</p>
+    </div>
+
+    <div style="background:#fff;border:2px solid var(--arena);border-radius:14px;padding:1.2rem 1.5rem;max-width:420px;margin:0 auto;">
+      <p style="font-size:.88rem;line-height:1.7;color:#555;">
+        📋 <strong>Pasos para participar:</strong><br>
+        1. Elige un número disponible en la pestaña 🎟️<br>
+        2. Transfiere $5.000 a la cuenta indicada arriba<br>
+        3. Envía el comprobante a quien te vendió el número<br>
+        4. ¡Espera el sorteo el <strong>3 de julio a las 20:00 hrs</strong>! 🎉
+      </p>
+    </div>
+
   </div>
 </div>
 
@@ -188,7 +259,6 @@
       </div>
       <div class="rifas-nav" id="adminRifasNav"></div>
       <div style="text-align:center">
-        <div id="adminLoading2" class="loading" style="display:none"><div class="spinner"></div></div>
         <div class="ticket-grid" id="adminTickets"></div>
       </div>
       <div class="section-title" style="margin-top:1.5rem">
@@ -238,7 +308,7 @@
   <div class="modal">
     <h2>Nueva rifa</h2>
     <p class="modal-sub">Se creará con 10 números disponibles</p>
-    <div class="field"><label>Nombre / etiqueta (opcional)</label><input type="text" id="nr-nombre" placeholder="ej: Rifa diciembre, Tanda 2…" maxlength="30"/></div>
+    <div class="field"><label>Nombre / etiqueta (opcional)</label><input type="text" id="nr-nombre" placeholder="ej: Rifa 2, Tanda 2…" maxlength="30"/></div>
     <div class="modal-btns">
       <button class="btn btn-cancel" onclick="closeModal('modalNuevaRifa')">Cancelar</button>
       <button class="btn btn-verde" id="btnNuevaRifa" onclick="confirmarNuevaRifa()">Crear rifa</button>
@@ -247,16 +317,12 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<footer>Rifa solidaria a beneficio de Matías Muñoz · $5.000 por número</footer>
+<footer>Rifa solidaria a beneficio de Matías Muñoz · $5.000 por número · Sorteo 3 julio 2026</footer>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG — PEGA AQUÍ TU URL DE APPS SCRIPT
-// ══════════════════════════════════════════════
-const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbxVFIynzHhT75yrz8uaqfTFgFVTBp2xMoGISQlcNl3wCThFoYQnGrUPlMLsHDVUDLZz_A/exec';
-const ADMIN_PASS  = 'matias2026'; // puedes cambiarla
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVFIynzHhT75yrz8uaqfTFgFVTBp2xMoGISQlcNl3wCThFoYQnGrUPlMLsHDVUDLZz_A/exec';
+const ADMIN_PASS = 'matias2026';
 
-// ══ ESTADO LOCAL (caché) ══
 let db = { rifas: [], ventas: [], correlativoSig: 1 };
 let currentRifaPublic = null;
 let currentRifaAdmin  = null;
@@ -264,30 +330,48 @@ let pendingTicket     = null;
 let adminLoggedIn     = false;
 
 const PRIZES = [
-  "2 bidones + dispensador","Consejería ginecológica/anticonceptiva",
-  "Pack 5 sobres mundial (2)","Consulta nutricional","Polera mujer",
-  "Polera hombre","Brunch para 2 — Sofá Café","2 poleras Murph",
-  "Mes Katsu","Frazada 2 plazas","Juego de toallas","Manta sherpa",
-  "Barra 20 kg","Balón 9 kg","Par mancuernas 15 lbs",
-  "Plan semestral 12 clases","Plan trimestral 16 clases","Plan mensual full",
-  "Mini wafflera","Cinturón levantamiento talla M","Kit muñequeras + calleras",
-  "Día de peluquería","Gift card ropa niño","Gift card tienda de joyas"
+  { name: "Barra fit. solutions 20 kg",        valor: "$180.000" },
+  { name: "Manta Sherpa Bessone",               valor: "$15.000"  },
+  { name: "2 bidones agua + dispensador",       valor: "$20.000"  },
+  { name: "Consejería ginecológica",            valor: "$25.000"  },
+  { name: "Consulta nutricional",               valor: "$35.000"  },
+  { name: "Polera Ragnarfit mujer",             valor: "$15.000"  },
+  { name: "Balón 9 kg fit. solutions",          valor: "$50.000"  },
+  { name: "Mantequilla maní Fitsweet",          valor: "$15.000"  },
+  { name: "Mini wafflera",                      valor: "$20.000"  },
+  { name: "Frazada 2 plazas Bessone",           valor: "$20.000"  },
+  { name: "Plan trimestral 16 clases Katsu",    valor: "$202.000" },
+  { name: "Kit muñequeras + calleras",          valor: "$20.000"  },
+  { name: "Juego de toallas Bessone",           valor: "$18.000"  },
+  { name: "Polera Ragnarfit hombre",            valor: "$15.000"  },
+  { name: "Par mancuernas 15 lbs",              valor: "$30.000"  },
+  { name: "Cinturón de levantamiento",          valor: "$30.000"  },
+  { name: "Caja alfajores FitSweet",            valor: "$13.500"  },
+  { name: "Plan semestral Katsu 12 clases",     valor: "$321.000" },
+  { name: "Asesoría derecho familiar",          valor: "$40.000"  },
+  { name: "Pack 5 sobres Mundial",              valor: "$11.000"  },
+  { name: "1 polera Murph",                     valor: "$17.000"  },
+  { name: "Plan Katsu mensual full",            valor: "$103.000" },
+  { name: "Cuerda salto Core",                  valor: "$35.000"  },
+  { name: "1 polera Murph",                     valor: "$17.000"  },
+  { name: "Brunch para 2 en Sofá Café",         valor: "$35.000"  },
+  { name: "Parrilla eléctrica",                 valor: "$35.000"  },
+  { name: "Gift Card tienda Marejoyas",         valor: "$30.000"  },
+  { name: "Gift Card Rambakids",                valor: "$30.000"  },
+  { name: "Día de peluquería",                  valor: "$40.000"  },
 ];
 
-// ══ API ══
 async function apiGet(params) {
   const url = SCRIPT_URL + '?' + new URLSearchParams(params);
-  const r   = await fetch(url, { redirect: 'follow' });
+  const r = await fetch(url, { redirect: 'follow' });
   return r.json();
 }
 async function apiPost(body) {
-  // Apps Script CORS fix: send POST data as GET parameter
   const url = SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(body));
-  const r   = await fetch(url, { redirect: 'follow' });
+  const r = await fetch(url, { redirect: 'follow' });
   return r.json();
 }
 
-// ══ INIT ══
 async function loadData() {
   try {
     const data = await apiGet({ action: 'getData' });
@@ -298,32 +382,36 @@ async function loadData() {
     currentRifaPublic = db.rifas[0].id;
     currentRifaAdmin  = db.rifas[0].id;
   } catch(e) {
-    // Sin conexión al script, modo demo
     db.rifas = [{ id:1, label:'Rifa 1' }];
     db.ventas = [];
     currentRifaPublic = 1; currentRifaAdmin = 1;
-    showToast('⚠️ Configura la URL del script para guardar datos', '#e67e22');
+    showToast('⚠️ Sin conexión al servidor','#e67e22');
   }
 }
 
-// ══ TABS ══
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['publica','premios','admin'][i]===tab));
+  const tabs = ['publica','premios','pago','admin'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+tab).classList.add('active');
   if (tab==='publica') renderPublic();
   if (tab==='admin' && adminLoggedIn) renderAdmin();
 }
 
-// ══ PREMIOS ══
+// PREMIOS
 (function(){
   const g = document.getElementById('prizesGrid');
   PRIZES.forEach((p,i) => {
-    g.innerHTML += `<div class="prize-card"><span class="prize-num">${i+1}</span><span class="prize-name">${p}</span></div>`;
+    g.innerHTML += `<div class="prize-card">
+      <span class="prize-num">${i+1}</span>
+      <div class="prize-info">
+        <div class="prize-name">${p.name}</div>
+        <div class="prize-valor">Valor ref: ${p.valor}</div>
+      </div>
+    </div>`;
   });
 })();
 
-// ══ PUBLIC ══
 function renderPublic() {
   const nav = document.getElementById('publicRifasNav');
   nav.innerHTML = '';
@@ -334,26 +422,23 @@ function renderPublic() {
     b.onclick = () => { currentRifaPublic=r.id; renderPublic(); };
     nav.appendChild(b);
   });
-
   const grid = document.getElementById('publicTickets');
   const load = document.getElementById('publicLoading');
   load.style.display='none'; grid.style.display='grid';
   grid.innerHTML='';
   for (let n=1;n<=10;n++) {
-    const v   = getVenta(currentRifaPublic,n);
+    const v = getVenta(currentRifaPublic,n);
     const cls = v ? (v.estado==='pagado'?'sold':'reserved') : '';
     const lbl = v ? `<span class="t-name">${v.nombre.split(' ')[0]}</span>` : '';
     grid.innerHTML += `<div class="ticket ${cls}"><span class="t-num">${n}</span>${lbl}</div>`;
   }
-
   const pagados    = db.ventas.filter(v=>v.estado==='pagado').length;
   const reservados = db.ventas.filter(v=>v.estado==='reservado').length;
-  document.getElementById('soldCount').textContent    = pagados;
-  document.getElementById('reservedCount').textContent= reservados;
-  document.getElementById('totalAmount').textContent  = '$'+(pagados*5000).toLocaleString('es-CL');
+  document.getElementById('soldCount').textContent     = pagados;
+  document.getElementById('reservedCount').textContent = reservados;
+  document.getElementById('totalAmount').textContent   = '$'+(pagados*5000).toLocaleString('es-CL');
 }
 
-// ══ LOGIN ══
 function tryLogin() {
   if (document.getElementById('passInput').value===ADMIN_PASS) {
     adminLoggedIn=true;
@@ -367,7 +452,6 @@ function tryLogin() {
 }
 document.getElementById('passInput').addEventListener('keydown',e=>{ if(e.key==='Enter') tryLogin(); });
 
-// ══ ADMIN ══
 function renderAdmin() {
   renderStats(); renderAdminNav(); renderAdminTickets(); renderTable(); renderFilterRifa();
 }
@@ -424,7 +508,6 @@ function renderTable() {
   if(fR) rows=rows.filter(v=>v.rifaId==fR);
   if(fS) rows=rows.filter(v=>v.estado===fS);
   if(fQ) rows=rows.filter(v=>v.nombre.toLowerCase().includes(fQ)||(v.telefono||'').includes(fQ));
-
   const body=document.getElementById('trackingBody');
   if(!rows.length){ body.innerHTML='<tr><td colspan="8" class="empty-state">Sin registros aún</td></tr>'; return; }
   body.innerHTML=rows.map(v=>{
@@ -454,7 +537,6 @@ function renderFilterRifa() {
   sel.value=cur;
 }
 
-// ══ ACCIONES ══
 function getVenta(rifaId,numero) {
   return db.ventas.find(v=>v.rifaId==rifaId&&Number(v.numero)===numero)||null;
 }
@@ -479,20 +561,18 @@ async function confirmVenta() {
   const fecha =new Date().toLocaleDateString('es-CL');
   const btn   =document.getElementById('btnConfirmVenta');
   btn.disabled=true; btn.textContent='Guardando…';
-
   try {
     const res=await apiPost({ action:'addVenta', rifaId:pendingTicket.rifaId,
       numero:pendingTicket.numero, nombre, telefono:tel, estado, fecha });
     const newCorr=res.correlativo||db.correlativoSig++;
     const rifa=db.rifas.find(r=>r.id==pendingTicket.rifaId);
     db.ventas.push({ correlativo:newCorr, rifaId:pendingTicket.rifaId,
-      rifaLabel:rifa?.label, numero:pendingTicket.numero,
-      nombre, telefono:tel, estado, fecha });
+      rifaLabel:rifa?.label, numero:pendingTicket.numero, nombre, telefono:tel, estado, fecha });
     closeModal('modalVenta');
     renderAdmin(); renderPublic();
     showToast(`RIF-${String(newCorr).padStart(3,'0')} — ${nombre} guardado 🎉`);
   } catch(e) {
-    showToast('Error al guardar. Verifica la URL del script.','#e74c3c');
+    showToast('Error al guardar','#e74c3c');
   }
   btn.disabled=false; btn.textContent='Guardar';
 }
@@ -543,6 +623,10 @@ function exportCSV() {
   showToast('CSV exportado ⬇');
 }
 
+function copiar(texto) {
+  navigator.clipboard.writeText(texto).then(()=>showToast('Copiado ✓'));
+}
+
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(o=>{
@@ -560,7 +644,6 @@ function showToast(msg,bg='#27AE60') {
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// INIT
 loadData().then(()=>renderPublic());
 </script>
 </body>
